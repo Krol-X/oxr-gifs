@@ -4,28 +4,39 @@ import { ServiceConfig } from '$lib/config';
 import { getOxrCourse } from '$lib/service/OxrCourse/OxrCourse';
 import { getGiphyRandom } from '$lib/service/Giphy/GiphyRandom';
 
-import { addDays } from '$lib/utils/datetime';
+import { addDays, dateToday, dateYesterday } from '$lib/utils/datetime';
 
+export async function GET({ params }) {
+  const ServerError = json({ status: 500 });
 
-export async function GET() {
+  const currency = params.currency ?? "rub";
   // todo: api errors check
   const OXR_APP_ID = ServiceConfig.Oxr.APP_ID;
   const GIPHY_API_KEY = ServiceConfig.Giphy.API_KEY;
-  
-	const todayRubCourse = await getOxrCourse(OXR_APP_ID, null, "rub");
-	const yesterdayRubCourse = await getOxrCourse(
-    OXR_APP_ID,
-    addDays(new Date(), -1),
-    "rub"
+
+	const todayCourse = await getOxrCourse(OXR_APP_ID, currency);
+  if (!todayCourse?.course)
+    return ServerError;
+	const yesterdayCourse = await getOxrCourse(
+    OXR_APP_ID, currency, dateYesterday()
   );
-  
-  const resultCond = todayRubCourse > yesterdayRubCourse;
-  
-  const result = await getGiphyRandom(
+  if (!yesterdayCourse?.course)
+    return ServerError;
+  const gifTagCond = todayCourse.course > yesterdayCourse.course;
+
+  const giphyResult = await getGiphyRandom(
     GIPHY_API_KEY,
-    resultCond? 'rich': 'broke'
-  );
-  
-  // todo: return image instead of url to giphy
-	return json(result.data?.images?.downsized?.url);
+    gifTagCond? 'rich': 'broke'
+  ).catch(err => {
+    return null;
+  });
+  if (!giphyResult)
+    return ServerError;
+
+  // todo: return image instead of url to giphy (CORS?)
+  return json({
+    course1: todayCourse,
+    course2: yesterdayCourse,
+    gifurl: giphyResult?.data?.images?.downsized?.url
+  });
 }

@@ -2,9 +2,9 @@ const OXR_API = 'https://openexchangerates.org/api';
 
 import { createUrl } from '$lib/utils/url';
 
-export const getOxrCourse = async (appId, date, currency) => {
+export const getOxrCourse = async (appId, currency, date) => {
   if (!(date instanceof Date)) {
-    return await getOxrCourse(appId, new Date());
+    return await getOxrCourse(appId, currency, new Date());
   }
   const year = date.getFullYear();
   const month = date.toLocaleDateString("en-US", {month: '2-digit'})
@@ -17,6 +17,9 @@ export const getOxrCourse = async (appId, date, currency) => {
     // resp.status
     return resp.json()
   });
-  const result = currency? data["rates"][currency.toUpperCase()]: data;
+  const result = {
+    currency: currency,
+    course: currency? data["rates"][currency.toUpperCase()]: data
+  };
   return result
 }

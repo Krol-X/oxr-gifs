@@ -3,3 +3,7 @@ export const addDays = (date, days) => {
   result.setDate(result.getDate() + days);
   return result;
 }
+
+export const dateToday = () => (new Date());
+export const dateYesterday = () => (addDays(new Date(), -1));
+export const dateTommorow = () => (addDays(new Date(), 1));
