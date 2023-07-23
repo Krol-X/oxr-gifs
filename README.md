@@ -1,38 +1,32 @@
-# create-svelte
+﻿# Oxr-Gifs
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Task
+Создать сервис, который обращается к сервису курсов валют, и отдает gif в ответ.
+Если курс по отношению к рублю за сегодня стал выше вчерашнего,
+  то отдаем рандомную отсюда https://giphy.com/search/rich
+  если ниже - отсюда https://giphy.com/search/broke
+Ссылки:
+REST API курсов валют - https://docs.openexchangerates.org/
+REST API гифок - https://developers.giphy.com/docs/api#quick-start-guide
 
-## Creating a project
+*Must Have*
+Сервис на Spring Boot 2 + Java / Kotlin
+Запросы приходят на HTTP endpoint, туда передается код валюты.
+Для взаимодействия с внешними сервисами используется Feign.
+Все параметры (валюта по отношению к которой смотрится курс, адреса внешних сервисов и т.д.)
+вынесены в настройки.
+На сервис написаны тесты (для мока внешних сервисов можно использовать @mockbean или WireMock).
+Для сборки должен использоваться Gradle.
+Результатом выполнения должен быть репо на GitHub с инструкцией по запуску.
 
-If you're seeing this, you've probably already done this step. Congrats!
+*Nice to Have*
+Сборка и запуск Docker контейнера с этим сервисом
 
+## Run it
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+yarn run dev
 
-# create a new project in my-app
-npm create svelte@latest my-app
+or
+
+yarn run build
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
